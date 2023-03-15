@@ -1,0 +1,47 @@
+services:
+  minio1:
+    image: minio/minio
+    container_name: minio1
+    volumes:
+      - ./data1:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123456789
+    networks:
+      - minio-net
+    command: server --console-address ":9001"  http://minio1/data http://minio2/data http://minio3/data
+    
+  minio2:
+    image: minio/minio
+    container_name: minio2
+    volumes:
+      - ./data2:/data
+    ports:
+      - "9002:9001"
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123456789
+    networks:
+      - minio-net
+    command: server --console-address ":9001" http://minio1/data http://minio2/data http://minio3/data
+
+  minio3:
+    image: minio/minio
+    container_name: minio3
+    volumes:
+      - ./data3:/data
+    ports:
+      - "9003:9001"
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123456789
+    networks:
+      - minio-net
+    command: server --console-address ":9001" http://minio1/data http://minio2/data http://minio3/data
+    
+networks:
+  minio-net:
+    driver: bridge
